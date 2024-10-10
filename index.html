@@ -1,7 +1,15 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balloon Pump Game</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file -->
+</head>
+
       shuffledPopChances = [...popChances].sort(() => Math.random() - 0.5);
     }
-
+<body>
     // Gradient pop probability logic
     function calculatePopChance(pumpCount, basePopChance) {
       const halfN = Math.round(0.5 / basePopChance); // Dynamically calculate halfN based on base pop probability
@@ -52,4 +60,6 @@
       balloon.style.width = balloonSize + 'px';
       balloon.style.height = balloonSize + 'px';
       currentEarnings += pumpValue;
+   <script src="script.js"></script>
+</body>
 </html>
