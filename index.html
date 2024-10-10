@@ -45,7 +45,7 @@
     <div id="counter">Balloons: Pumped 0 | Collected 0</div>
 
     <div id="game-over">
-        <p>Game over, you scored in the <span id="total-percentile"></span>%th percentile.</p>
+        <p>Game over, you scored in the <span id="total-percentile"></span>th percentile.</p>
         <p id="score"></p>
         <button id="restartButton">Restart</button>
     </div>
@@ -179,7 +179,7 @@
 
         // Calculate the player's percentile based on the score
         function calculateScore() {
-            const mean = 10; // Adjust based on your game logic
+            const mean = 13; // Adjust based on your game logic
             const stdev = 4; // Adjust based on your game logic
 
             const z = (totalBalance - mean) / stdev; // Calculate Z-score
