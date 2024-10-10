@@ -2,41 +2,94 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Balloon Pump Game</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f8ff;
+        }
+        #balloon {
+            border-radius: 50%;
+            margin: 50px auto;
+            transition: width 0.3s, height 0.3s;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
+            cursor: pointer;
+        }
+        #balance, #earnings, #counter {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+        #game-over {
+            display: none;
+            font-size: 28px;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <!-- HTML content goes here (e.g., balloon element, buttons) -->
-    <div id="balloon" style="width: 50px; height: 50px; background-color: red;"></div> <!-- Example balloon -->
-    <button id="pumpButton">Pump Balloon</button> <!-- Example pump button -->
 
-    <script src="script.js"></script> <!-- Link to your JavaScript file -->
-    
+    <h1>Balloon Pump Game</h1>
+
+    <div id="balloon"></div>
+
+    <button id="pumpButton">Pump</button>
+    <button id="collectButton">Collect</button>
+
+    <div id="earnings">Earnings: $0.00</div>
+    <div id="balance">Balance: $0.00</div>
+    <div id="counter">Balloons: Pumped 0 | Collected 0</div>
+
+    <div id="game-over">
+        <p>Game over, you scored in the top <span id="total-percentile"></span>%.</p>
+        <p id="score"></p>
+        <button id="restartButton">Restart</button>
+    </div>
+
     <script>
-        // JavaScript code goes here
-        
-        // Initialize variables
-        let balloonSize = 50;
-        let pumpCount = 0;
-        const popChances = [0.1, 0.3, 0.5]; // Example pop chances array
-        let currentBalloon;
-        let lastBalloonColor;
+        let balloonSize = 50; // Initial balloon size
         let currentEarnings = 0;
-        const pumpValue = 1; // Example value for each pump
-        const balloonColors = ['red', 'blue', 'green']; // Example balloon colors
-        let shuffledPopChances;
+        let totalBalance = 0;
+        let pumpCount = 0;
+        let collectedCount = 0;
+        let totalBalloons = 0;
+        const maxBalloons = 39;
+        const pumpValue = 0.05; // Each pump gives $0.05
 
-        // Gradient pop probability logic
+        const balloon = document.getElementById('balloon');
+        const earningsDisplay = document.getElementById('earnings');
+        const balanceDisplay = document.getElementById('balance');
+        const counterDisplay = document.getElementById('counter');
+        const pumpButton = document.getElementById('pumpButton');
+        const collectButton = document.getElementById('collectButton');
+        const gameOverDisplay = document.getElementById('game-over');
+        const totalPercentileDisplay = document.getElementById('total-percentile');
+        const scoreDisplay = document.getElementById('score');
+        const restartButton = document.getElementById('restartButton');
+
+        const balloonColors = ['red', 'yellow', 'blue'];
+        const popChances = [0.025, 0.05, 0.25]; // 2.5%, 5%, and 25% pop chances
+        let shuffledPopChances = [];
+        let lastBalloonColor = null; // Track the last balloon color to avoid repetition
+
+        let currentBalloon;
+        let popChance;
+
+        // Shuffle pop chances for each new game
         function shufflePopChances() {
             shuffledPopChances = [...popChances].sort(() => Math.random() - 0.5);
         }
 
+        // Gradient pop probability logic
         function calculatePopChance(pumpCount, basePopChance) {
             const halfN = Math.round(0.5 / basePopChance); // Dynamically calculate halfN based on base pop probability
 
             if (pumpCount <= halfN) {
-                return 0.3 * basePopChance; // First 1/2n pumps, reduced pop chance
+                return 0.1 * basePopChance; // First 1/2n pumps, reduced pop chance
             } else if (pumpCount <= 3 * halfN) {
                 return basePopChance; // Between 1/2n and 3/2n pumps, regular pop chance
             } else {
@@ -51,19 +104,21 @@
             currentBalloon = balloonColor;
             popChance = shuffledPopChances[randomIndex];
 
-            const balloon = document.getElementById('balloon');
             balloon.style.backgroundColor = currentBalloon;
+            balloonSize = 50;
+            pumpCount = 0;
             balloon.style.width = balloonSize + 'px';
             balloon.style.height = balloonSize + 'px';
-            pumpCount = 0; // Reset pump count
         }
 
         // Get the next balloon color, ensuring it's different from the last
         function getNextBalloonColor() {
             // Create a list of colors excluding the last one
             const availableColors = balloonColors.filter(color => color !== lastBalloonColor);
+
             // Randomly select a color from the available colors
             const nextColor = availableColors[Math.floor(Math.random() * availableColors.length)];
+
             lastBalloonColor = nextColor;
             return nextColor;
         }
@@ -73,14 +128,123 @@
         newBalloon();
 
         // Function to handle pumping the balloon
-        const pumpButton = document.getElementById('pumpButton');
-        pumpButton.addEventListener('click', function () {
+        pumpButton.addEventListener('click', function() {
             pumpCount++;
             balloonSize = 50 + 10 * Math.cbrt(pumpCount); // Cubic root growth for size
-            const balloon = document.getElementById('balloon');
             balloon.style.width = balloonSize + 'px';
             balloon.style.height = balloonSize + 'px';
             currentEarnings += pumpValue;
+
+            earningsDisplay.innerText = `Earnings: $${currentEarnings.toFixed(2)}`;
+
+            // Adjusted pop chance based on pump count
+            const adjustedPopChance = calculatePopChance(pumpCount, popChance);
+            if (Math.random() < adjustedPopChance) {
+                alert('Balloon popped! You lose your current earnings.');
+                currentEarnings = 0;
+                earningsDisplay.innerText = `Earnings: $0.00`;
+                resetBalloon();
+            }
+
+            checkGameEnd();
+        });
+
+        // Function to handle collecting the earnings
+        collectButton.addEventListener('click', function() {
+            totalBalance += currentEarnings;
+            collectedCount++;
+            currentEarnings = 0;
+            balanceDisplay.innerText = `Balance: $${totalBalance.toFixed(2)}`;
+            earningsDisplay.innerText = `Earnings: $0.00`;
+            resetBalloon();
+
+            checkGameEnd();
+        });
+
+        // Reset balloon and update the counter
+        function resetBalloon() {
+            totalBalloons++;
+            counterDisplay.innerText = `Balloons: Pumped ${totalBalloons} | Collected ${collectedCount}`;
+            if (totalBalloons < maxBalloons) {
+                newBalloon(); // Start a new balloon
+            }
+        }
+
+        // Check if the game has reached its limit
+        function checkGameEnd() {
+            if (totalBalloons >= maxBalloons) {
+                endGame();
+            }
+        }
+
+        // Calculate the player's percentile based on the score
+        function calculateScore() {
+            const mean = 10; // Adjust based on your game logic
+            const stdev = 4; // Adjust based on your game logic
+
+            const z = (totalBalance - mean) / stdev; // Calculate Z-score
+            const percentile = 0.5 * (1 + erf(z / Math.sqrt(2))); // Using the CDF
+
+            return percentile * 100; // Return as percentage
+        }
+
+        // Error function approximation for percentile calculation
+        function erf(x) {
+            // Abramowitz and Stegun formula 7.1.26 approximation
+            const a1 = 0.254829592;
+            const a2 = -0.284496736;
+            const a3 = 1.421413741;
+            const a4 = -1.453152027;
+            const a5 = 1.061405429;
+            const p = 0.3275911;
+
+            const sign = (x >= 0) ? 1 : -1;
+            x = Math.abs(x);
+
+            const t = 1 / (1 + p * x);
+            const y = 1 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+
+            return sign * y;
+        }
+
+        // End game logic
+        function endGame() {
+            pumpButton.disabled = true;
+            collectButton.disabled = true;
+            gameOverDisplay.style.display = 'block';
+
+            const scorePercentile = calculateScore();
+            totalPercentileDisplay.innerText = `${scorePercentile.toFixed(2)}`; // Show the percentile
+
+            let scoreMessage = '';
+            if (totalBalance >= 22) {
+                scoreMessage = "Congratulations, you win big!";
+            } else if (totalBalance >= 18) {
+                scoreMessage = "Congratulations, you win small!";
+            } else {
+                scoreMessage = `Overall, you scored in the top ${Math.round(scorePercentile)}%. Better luck next time!`;
+            }
+
+            scoreDisplay.innerText = scoreMessage;
+        }
+
+        // Restart the game
+        restartButton.addEventListener('click', function() {
+            totalBalance = 0;
+            currentEarnings = 0;
+            totalBalloons = 0;
+            pumpCount = 0;
+            collectedCount = 0;
+
+            earningsDisplay.innerText = `Earnings: $0.00`;
+            balanceDisplay.innerText = `Balance: $0.00`;
+            counterDisplay.innerText = `Balloons: Pumped 0 | Collected 0`;
+            gameOverDisplay.style.display = 'none';
+            pumpButton.disabled = false;
+            collectButton.disabled = false;
+
+            shufflePopChances(); // Shuffle again for a new game
+            newBalloon(); // Start a new balloon
         });
     </script>
 </body>
