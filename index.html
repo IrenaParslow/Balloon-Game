@@ -6,60 +6,82 @@
     <title>Balloon Pump Game</title>
     <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file -->
 </head>
-
-      shuffledPopChances = [...popChances].sort(() => Math.random() - 0.5);
-    }
 <body>
-    // Gradient pop probability logic
-    function calculatePopChance(pumpCount, basePopChance) {
-      const halfN = Math.round(0.5 / basePopChance); // Dynamically calculate halfN based on base pop probability
+    <!-- HTML content goes here (e.g., balloon element, buttons) -->
+    <div id="balloon" style="width: 50px; height: 50px; background-color: red;"></div> <!-- Example balloon -->
+    <button id="pumpButton">Pump Balloon</button> <!-- Example pump button -->
 
-      if (pumpCount <= halfN) {
-        return 0.3 * basePopChance; // First 1/2n pumps, reduced pop chance
-      } else if (pumpCount <= 3 * halfN) {
-        return basePopChance; // Between 1/2n and 3/2n pumps, regular pop chance
-      } else {
-        return (1 - basePopChance) * 0.1; // After 3/2n pumps, very high pop chance
-      }
-    }
+    <script src="script.js"></script> <!-- Link to your JavaScript file -->
+    
+    <script>
+        // JavaScript code goes here
+        
+        // Initialize variables
+        let balloonSize = 50;
+        let pumpCount = 0;
+        const popChances = [0.1, 0.3, 0.5]; // Example pop chances array
+        let currentBalloon;
+        let lastBalloonColor;
+        let currentEarnings = 0;
+        const pumpValue = 1; // Example value for each pump
+        const balloonColors = ['red', 'blue', 'green']; // Example balloon colors
+        let shuffledPopChances;
 
-    // Start the game with a new balloon
-    function newBalloon() {
-      const balloonColor = getNextBalloonColor(); // Get a balloon color different from the last one
-      const randomIndex = balloonColors.indexOf(balloonColor); // Get corresponding pop chance
-      currentBalloon = balloonColor;
-      popChance = shuffledPopChances[randomIndex];
+        // Gradient pop probability logic
+        function shufflePopChances() {
+            shuffledPopChances = [...popChances].sort(() => Math.random() - 0.5);
+        }
 
-      balloon.style.backgroundColor = currentBalloon;
-      balloonSize = 50;
-      pumpCount = 0;
-      balloon.style.width = balloonSize + 'px';
-      balloon.style.height = balloonSize + 'px';
-    }
+        function calculatePopChance(pumpCount, basePopChance) {
+            const halfN = Math.round(0.5 / basePopChance); // Dynamically calculate halfN based on base pop probability
 
-    // Get the next balloon color, ensuring it's different from the last
-    function getNextBalloonColor() {
-      // Create a list of colors excluding the last one
-      const availableColors = balloonColors.filter(color => color !== lastBalloonColor);
+            if (pumpCount <= halfN) {
+                return 0.3 * basePopChance; // First 1/2n pumps, reduced pop chance
+            } else if (pumpCount <= 3 * halfN) {
+                return basePopChance; // Between 1/2n and 3/2n pumps, regular pop chance
+            } else {
+                return (1 - basePopChance) * 0.1; // After 3/2n pumps, very high pop chance
+            }
+        }
 
-      // Randomly select a color from the available colors
-      const nextColor = availableColors[Math.floor(Math.random() * availableColors.length)];
+        // Start the game with a new balloon
+        function newBalloon() {
+            const balloonColor = getNextBalloonColor(); // Get a balloon color different from the last one
+            const randomIndex = balloonColors.indexOf(balloonColor); // Get corresponding pop chance
+            currentBalloon = balloonColor;
+            popChance = shuffledPopChances[randomIndex];
 
-      lastBalloonColor = nextColor;
-      return nextColor;
-    }
+            const balloon = document.getElementById('balloon');
+            balloon.style.backgroundColor = currentBalloon;
+            balloon.style.width = balloonSize + 'px';
+            balloon.style.height = balloonSize + 'px';
+            pumpCount = 0; // Reset pump count
+        }
 
-    // Initial shuffle
-    shufflePopChances();
-    newBalloon();
+        // Get the next balloon color, ensuring it's different from the last
+        function getNextBalloonColor() {
+            // Create a list of colors excluding the last one
+            const availableColors = balloonColors.filter(color => color !== lastBalloonColor);
+            // Randomly select a color from the available colors
+            const nextColor = availableColors[Math.floor(Math.random() * availableColors.length)];
+            lastBalloonColor = nextColor;
+            return nextColor;
+        }
 
-    // Function to handle pumping the balloon
-    pumpButton.addEventListener('click', function () {
-      pumpCount++;
-      balloonSize = 50 + 10 * Math.cbrt(pumpCount); // Cubic root growth for size
-      balloon.style.width = balloonSize + 'px';
-      balloon.style.height = balloonSize + 'px';
-      currentEarnings += pumpValue;
-   <script src="script.js"></script>
+        // Initial shuffle
+        shufflePopChances();
+        newBalloon();
+
+        // Function to handle pumping the balloon
+        const pumpButton = document.getElementById('pumpButton');
+        pumpButton.addEventListener('click', function () {
+            pumpCount++;
+            balloonSize = 50 + 10 * Math.cbrt(pumpCount); // Cubic root growth for size
+            const balloon = document.getElementById('balloon');
+            balloon.style.width = balloonSize + 'px';
+            balloon.style.height = balloonSize + 'px';
+            currentEarnings += pumpValue;
+        });
+    </script>
 </body>
 </html>
