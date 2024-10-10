@@ -45,7 +45,7 @@
     <div id="counter">Balloons: Pumped 0 | Collected 0</div>
 
     <div id="game-over">
-        <p>Game over, you scored in the top <span id="total-percentile"></span>%.</p>
+        <p>Game over, you scored in the <span id="total-percentile"></span>%th percentile.</p>
         <p id="score"></p>
         <button id="restartButton">Restart</button>
     </div>
@@ -222,7 +222,7 @@
             } else if (totalBalance >= 18) {
                 scoreMessage = "Congratulations, you win small!";
             } else {
-                scoreMessage = `Overall, you scored in the top ${Math.round(scorePercentile)}%. Better luck next time!`;
+                scoreMessage = `Overall, you surpassed ${Math.round(scorePercentile)}% of the entire population. Better luck next time!`;
             }
 
             scoreDisplay.innerText = scoreMessage;
