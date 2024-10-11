@@ -217,9 +217,9 @@
             totalPercentileDisplay.innerText = `${scorePercentile.toFixed(2)}`; // Show the percentile
 
             let scoreMessage = '';
-            if (totalBalance >= 22) {
+            if (totalBalance >= 25) {
                 scoreMessage = "Congratulations, you win big!";
-            } else if (totalBalance >= 18) {
+            } else if (totalBalance >= 21) {
                 scoreMessage = "Congratulations, you win small!";
             } else {
                 scoreMessage = `Overall, you surpassed ${Math.round(scorePercentile)}% of the entire population. Better luck next time!`;
