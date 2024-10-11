@@ -89,11 +89,11 @@
             const halfN = Math.round(0.5 / basePopChance); // Dynamically calculate halfN based on base pop probability
 
             if (pumpCount <= halfN) {
-                return 0.3 * basePopChance; // First 1/2n pumps, reduced pop chance
+                return 0.2 * basePopChance; // First 1/2n pumps, reduced pop chance
             } else if (pumpCount <= 3 * halfN) {
                 return basePopChance; // Between 1/2n and 3/2n pumps, regular pop chance
             } else {
-                return (1 - basePopChance) * 0.1; // After 3/2n pumps, very high pop chance
+                return (1 - basePopChance * 0.1); // After 3/2n pumps, very high pop chance
             }
         }
 
