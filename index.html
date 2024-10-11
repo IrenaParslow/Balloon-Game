@@ -164,7 +164,7 @@
         // Reset balloon and update the counter
         function resetBalloon() {
             totalBalloons++;
-            counterDisplay.innerText = `Balloons: Pumped ${totalBalloons} | Collected ${collectedCount}`;
+            counterDisplay.innerText = `Balloons: Pumped ${totalBalloons} | Collected ${collectedCount} out of 39`;
             if (totalBalloons < maxBalloons) {
                 newBalloon(); // Start a new balloon
             }
@@ -179,8 +179,8 @@
 
         // Calculate the player's percentile based on the score
         function calculateScore() {
-            const mean = 10; // Adjust based on your game logic
-            const stdev = 4; // Adjust based on your game logic
+            const mean = 12; // Adjust based on your game logic
+            const stdev = 4.5; // Adjust based on your game logic
 
             const z = (totalBalance - mean) / stdev; // Calculate Z-score
             const percentile = 0.5 * (1 + erf(z / Math.sqrt(2))); // Using the CDF
@@ -217,9 +217,9 @@
             totalPercentileDisplay.innerText = `${scorePercentile.toFixed(2)}`; // Show the percentile
 
             let scoreMessage = '';
-            if (totalBalance >= 22) {
+            if (totalBalance >= 25.5) {
                 scoreMessage = "Congratulations, you win big!";
-            } else if (totalBalance >= 18) {
+            } else if (totalBalance >= 21) {
                 scoreMessage = "Congratulations, you win small!";
             } else {
                 scoreMessage = `Overall, you surpassed ${Math.round(scorePercentile)}% of the entire population. Better luck next time!`;
