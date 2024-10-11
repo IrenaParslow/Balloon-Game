@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balloon Pump Game</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file -->
+</head>
+
+      shuffledPopChances = [...popChances].sort(() => Math.random() - 0.5);
+    }
+<body>
+    // Gradient pop probability logic
+    function calculatePopChance(pumpCount, basePopChance) {
+      const halfN = Math.round(0.5 / basePopChance); // Dynamically calculate halfN based on base pop probability
+
+      if (pumpCount <= halfN) {
+        return 0.3 * basePopChance; // First 1/2n pumps, reduced pop chance
+      } else if (pumpCount <= 3 * halfN) {
+        return basePopChance; // Between 1/2n and 3/2n pumps, regular pop chance
+      } else {
+        return (1 - basePopChance) * 0.1; // After 3/2n pumps, very high pop chance
+      }
+    }
+
+    // Start the game with a new balloon
+    function newBalloon() {
+      const balloonColor = getNextBalloonColor(); // Get a balloon color different from the last one
+      const randomIndex = balloonColors.indexOf(balloonColor); // Get corresponding pop chance
+      currentBalloon = balloonColor;
+      popChance = shuffledPopChances[randomIndex];
+
+      balloon.style.backgroundColor = currentBalloon;
+      balloonSize = 50;
+      pumpCount = 0;
+      balloon.style.width = balloonSize + 'px';
+      balloon.style.height = balloonSize + 'px';
+    }
+
+    // Get the next balloon color, ensuring it's different from the last
+    function getNextBalloonColor() {
+      // Create a list of colors excluding the last one
+      const availableColors = balloonColors.filter(color => color !== lastBalloonColor);
+
+      // Randomly select a color from the available colors
+      const nextColor = availableColors[Math.floor(Math.random() * availableColors.length)];
+
+      lastBalloonColor = nextColor;
+      return nextColor;
+    }
+
+    // Initial shuffle
+    shufflePopChances();
+    newBalloon();
+
+    // Function to handle pumping the balloon
+    pumpButton.addEventListener('click', function () {
+      pumpCount++;
+      balloonSize = 50 + 10 * Math.cbrt(pumpCount); // Cubic root growth for size
+      balloon.style.width = balloonSize + 'px';
+      balloon.style.height = balloonSize + 'px';
+      currentEarnings += pumpValue;
+   <script src="script.js"></script>
+</body>
+</html>
