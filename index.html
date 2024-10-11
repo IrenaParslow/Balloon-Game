@@ -72,7 +72,7 @@
         const restartButton = document.getElementById('restartButton');
 
         const balloonColors = ['red', 'yellow', 'blue'];
-        const popChances = [0.05, 0.1, 0.25]; // 5%, 10%, and 25% pop chances
+        const popChances = [0.03, 0.06, 0.25]; // 5%, 10%, and 25% pop chances
         let shuffledPopChances = [];
         let lastBalloonColor = null; // Track the last balloon color to avoid repetition
 
@@ -89,7 +89,7 @@
             const halfN = Math.round(0.5 / basePopChance); // Dynamically calculate halfN based on base pop probability
 
             if (pumpCount <= halfN) {
-                return 0.2 * basePopChance; // First 1/2n pumps, reduced pop chance
+                return 0.16 * basePopChance; // First 1/2n pumps, reduced pop chance
             } else if (pumpCount <= 3 * halfN) {
                 return basePopChance; // Between 1/2n and 3/2n pumps, regular pop chance
             } else {
